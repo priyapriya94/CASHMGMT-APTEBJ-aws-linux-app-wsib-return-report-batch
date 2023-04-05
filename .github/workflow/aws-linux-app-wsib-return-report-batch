@@ -1,0 +1,31 @@
+name: aws-linux-app-wsib-return-report-batch
+
+on:
+  workflow_dispatch:
+    inputs:
+      appVersion:
+        required: true
+        type: string
+
+env:
+  repoPrefix: CASHMGMT-APTEBJ
+
+  
+jobs:
+  account-validation-api-image:
+    uses: dyedurham/CASHMGMT-ecs-generic-template/.github/workflows/ecs.yml@main
+    with:
+      product: 'apt'
+      repo: 'CASHMGMT-APTEBJ-aws-linux-app-wsib-return-report-batch'
+      appVersion: '${{ inputs.appVersion }}'
+      imageName: 'wsib-return-report-batch'
+      rpmPackageName: 'wsib-return-report-${{ inputs.appVersion }}'
+      entrypoint: '/opt/apt/wsib-financial-settlement/wsib-return-report.jar", "--spring.config.location=file:/opt/apt/wsib-return-report/'
+      app: batch
+      ecr-app: app
+      scripts:  'scripts/upload-config.sh'
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.APT_NONP_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.APT_NONP_AWS_SECRET_ACCESS_KEY }}
+      TOKEN_GH: ${{ secrets.TOKEN_GH }}
+      
